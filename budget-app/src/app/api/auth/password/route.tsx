@@ -1,4 +1,4 @@
-import { hashPassword } from "../../../../utils/bcrpyt";
+import { hashPassword } from "../../../../utils/bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 

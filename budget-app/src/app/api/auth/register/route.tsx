@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { UserRegistrationData } from "@/types/user";
-import { hashPassword } from "../../../../utils/bcrpyt";
+import { hashPassword } from "../../../../utils/bcrypt";
 import { signJWT } from "@/utils/jwt";
 import { userExists } from "@/utils/prisma"; 
 import { userRegistrationValidator } from "@/utils/validators/userValidator";
