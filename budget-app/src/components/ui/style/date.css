@@ -1,0 +1,23 @@
+.rdrCalendarWrapper {
+    background-color: rgb(41, 41, 41);
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.rdrDayNumber span {
+    color: white;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.rdrMonthAndYearPickers,
+.rdrWeekDay {
+    color: white !important;
+}
+
+.rdrMonthAndYearPickers select {
+    color: white; 
+    border: 1px solid #ccc; 
+}
+
