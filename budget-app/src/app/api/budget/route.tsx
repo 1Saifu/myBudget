@@ -54,12 +54,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("POST Request - Body:", body); 
+    
+    console.log("Received data for creating budget:", body);
 
     const { amount, startDate, endDate, userId }: BudgetData = body;
 
     if (!amount || !startDate || !endDate || !userId) {
-      console.log("POST Request - Missing required fields");
       return NextResponse.json({ message: "Amount, start date, end date, and user ID are required" }, { status: 400 });
     }
 
