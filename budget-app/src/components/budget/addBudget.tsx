@@ -1,86 +1,88 @@
 "use client";
 
-import React, { useState } from "react";
-import LocalStorageKit from "../../utils/localStorageKit";
+import React, { useState,useEffect } from "react";
+import BudgetModal from "./BudgetModal"; 
+import LocalStorageKit from "@/utils/localStorageKit";
+
 
 const addBudget: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [budgetCreated, setBudgetCreated] = useState(false);
 
-    const [amount, setAmount] = useState<number | "">("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    
-      const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-    
-        const userId = LocalStorageKit.get("@library/userId");
-        console.log("User ID:", userId);
-    
-        if (!userId) {
-          alert("User ID is required. Please log in.");
-          return;
-        }
-    
-        const budgetData = {
-            amount: Number(amount),
-            userId,
-          };
-    
-        setIsSubmitting(true);
 
-        try {
-            const response = await fetch("/api/budgets", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(budgetData),
-            });
-      
-            if (response.ok) {
-                alert("Budget created successfully!");
-                setAmount("");
-              } else {
-                const error = await response.json();
-                alert(`Error: ${error.message}`);
-              }
-            } catch (error) {
-              console.error("Error creating budget:", error);
-            } finally {
-              setIsSubmitting(false);
-            }
-          };
+  useEffect(() => {
+    const savedBudgetCreated = LocalStorageKit.get("@library/budgetCreated");
+    if (savedBudgetCreated) {
+      setBudgetCreated(true);
+    } else {
+      setBudgetCreated(false);
+    }
+  }, []);
 
-          return (
-            <div className="bg-[rgb(38, 0, 77)] p-6 rounded-md max-w-sm w-full">
-              <h2 className="text-lg font-light text-white mb-4">Add Budget Amount</h2>
-        
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div>
-                  <label htmlFor="amount" className="block text-sm font-light text-white">
-                    Budget Amount
-                  </label>
-                  <input
-                    id="amount"
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(Number(e.target.value) || "")}
-                    placeholder="Enter budget amount"
-                    className="w-full px-4 py-2 border-b-2 border-gray-300 focus:outline-none focus:border-purple-500 bg-transparent text-white"
-                    required
-                  />
-                </div>
 
-                <button
-                  type="submit"
-                  className={`inline-flex justify-center py-1 px-3 text-sm font-light rounded-[80px] text-white bg-transparent border-2 border-white hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
-                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Submitting..." : "Add Budget"}
-                </button>
-              </form>
-            </div>
-          );
-}
+  const openModal = () => {
+    setIsModalOpen(true);
+    checkUserBudget(); 
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleBudgetCreationSuccess = () => {
+    setBudgetCreated(true);
+    setIsModalOpen(false);  
+    LocalStorageKit.set("@library/budgetCreated", true);
+  };
+
+
+  const checkUserBudget = async () => {
+    const userId = LocalStorageKit.get("@library/userId");
+    if (!userId) {
+      console.log("No user ID found.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/budget`, {
+        method: 'GET',
+        headers: {
+          'user-id': userId,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      console.log('Fetched Budget:', data);
+
+      if (response.ok && data && data.length > 0) {
+        setBudgetCreated(true); 
+      } else {
+        setBudgetCreated(false); 
+      }
+    } catch (error) {
+      console.error("Error fetching budget details:", error);
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center">
+      {!budgetCreated && (
+        <button
+          onClick={openModal}
+          className="bg-transparent border-2 border-white text-white px-6 py-2 rounded-[30px] w-[300px] font-light w-[200px] hover:bg-purple-600 hover:text-gray-300 hover:border-gray-600 transition duration-300"
+        >
+          Add Budget
+        </button>
+      )}
+
+      <BudgetModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        onBudgetCreated={handleBudgetCreationSuccess} 
+      />
+    </div>
+  );
+};
 
 export default addBudget;

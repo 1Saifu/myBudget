@@ -20,11 +20,6 @@ const createCategory: React.FC = () => {
           return;
         }
 
-        const categoryData = {
-          name,
-          userId,
-        };
-    
         setIsSubmitting(true);
 
         try {
@@ -40,6 +35,7 @@ const createCategory: React.FC = () => {
           if (response.ok) {
             alert("Category created successfully!");
             setName("");
+            window.location.reload();
           } else {
             const error = await response.json();
             alert(`Error: ${error.message}`);
