@@ -11,7 +11,7 @@ const addBudget: React.FC = () => {
 
 
   useEffect(() => {
-    const savedBudgetCreated = LocalStorageKit.get("@library/budgetCreated");
+    const savedBudgetCreated = LocalStorageKit.get("@library/budgetData");
     if (savedBudgetCreated) {
       setBudgetCreated(true);
     } else {
@@ -19,6 +19,11 @@ const addBudget: React.FC = () => {
     }
   }, []);
 
+
+  const handleBudgetCreationSuccess = () => {
+    setBudgetCreated(true);
+    setIsModalOpen(false);  
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -29,15 +34,10 @@ const addBudget: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleBudgetCreationSuccess = () => {
-    setBudgetCreated(true);
-    setIsModalOpen(false);  
-    LocalStorageKit.set("@library/budgetCreated", true);
-  };
-
-
+//This checks if a user has a budget which will be used when you have a budget then the add budget button will not be needed
   const checkUserBudget = async () => {
     const userId = LocalStorageKit.get("@library/userId");
+
     if (!userId) {
       console.log("No user ID found.");
       return;
@@ -56,21 +56,23 @@ const addBudget: React.FC = () => {
       console.log('Fetched Budget:', data);
 
       if (response.ok && data && data.length > 0) {
+        LocalStorageKit.set('@library/budgetData', data); 
         setBudgetCreated(true); 
       } else {
+        LocalStorageKit.remove('@library/budgetData'); 
         setBudgetCreated(false); 
       }
     } catch (error) {
       console.error("Error fetching budget details:", error);
     }
-  };
+};
 
   return (
     <div className="flex justify-center items-center">
       {!budgetCreated && (
         <button
           onClick={openModal}
-          className="bg-transparent border-2 border-white text-white px-6 py-2 rounded-[30px] w-[300px] font-light w-[200px] hover:bg-purple-600 hover:text-gray-300 hover:border-gray-600 transition duration-300"
+          className="bg-transparent border-2 mt-1 border-white text-white px-6 py-2 rounded-[30px] w-[300px] font-light w-[200px] hover:bg-purple-600 hover:text-gray-300 hover:border-gray-600 transition duration-300"
         >
           Add Budget
         </button>

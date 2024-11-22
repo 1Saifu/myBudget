@@ -14,29 +14,68 @@ const loginForm: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Response Data:', data);
+        try {
+            const loginResponse = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (loginResponse.ok) {
+                const data = await loginResponse.json();
+                console.log('Response Data:', data);
 
                 LocalStorageKit.set('@library/token', data.token);
                 LocalStorageKit.set('@library/userId', data.userId);
 
-                console.log('Token stored:', data.token); 
-                console.log('userId stored:', data.userId); 
+                console.log('Token stored:', data.token);
+                console.log('userId stored:', data.userId);
+
+                await fetchUserBudget(data.userId);
+
                 router.push('/dashboard');
-        } else {
-            console.error('Login failed');
-            setErrorMessage('Login failed. Please check your email and password.'); 
+            } else {
+                console.error('Login failed');
+                setErrorMessage('Login failed. Please check your email and password.');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            setErrorMessage('An error occurred. Please try again later.');
         }
     };
+
+    //fetches budget when i sign in again since its being removed in logout.tsx
+    const fetchUserBudget = async (userId: string) => {
+        try {
+            const budgetResponse = await fetch(`/api/budget`, {
+                method: 'GET',
+                headers: {
+                    'user-id': userId,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (budgetResponse.ok) {
+                const budgetData = await budgetResponse.json();
+                console.log('User budget:', budgetData);
+
+                if (budgetData && budgetData.length > 0) {
+                    LocalStorageKit.set('@library/budgetData', budgetData);
+                } else {
+                    LocalStorageKit.remove('@library/budgetData');
+                }
+            } else {
+                console.log('No budget data found for the user');
+            }
+        } catch (error) {
+            console.error('Error fetching budget:', error);
+        }
+    };
+
+    
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-cover bg-center">

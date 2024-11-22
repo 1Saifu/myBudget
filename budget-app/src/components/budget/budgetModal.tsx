@@ -54,8 +54,9 @@ interface BudgetModalProps {
     
           if (response.ok) {
             alert("Budget created successfully!");
-            LocalStorageKit.set("@library/budgetCreated", true);
+            LocalStorageKit.set("@library/budgetData", budgetData);
             setAmount("");
+            window.location.reload();
             onBudgetCreated();
             onClose();          
         } else {
@@ -73,7 +74,7 @@ interface BudgetModalProps {
 
 
       return (
-        <div className="fixed inset-0 flex justify-center items-center z-50">
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-[rgb(38, 0, 77)] p-6 rounded-md max-w-sm w-full shadow-lg">
             <button
               onClick={onClose}

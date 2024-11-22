@@ -9,6 +9,8 @@ const Logout: React.FC = () => {
 
     const handleLogout = () => {
         LocalStorageKit.remove('@library/token'); 
+        LocalStorageKit.remove('@library/userId');
+        LocalStorageKit.remove('@library/budgetData'); 
         router.push('/'); 
     };
 

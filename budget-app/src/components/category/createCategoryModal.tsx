@@ -24,14 +24,14 @@ import CreateCategory from "./createCategory";
 
             {showModal && (
                 <div className="fixed inset-0 flex justify-center items-center bg-[rgba(41, 41, 41, 0.9)] z-50">
-                    <div className="bg-gray-950 p-6 rounded-md shadow-[0_4px_10px_rgba(200,200,200,0.1)] max-w-sm w-full z-60">
+                <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50 backdrop-blur-sm">
                         <CreateCategory />
                         <div className="mt-4">
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="inline-flex justify-center py-2 px-4 border border-transparent text-sm font-light rounded-full text-white bg-transparent border-2 border-white hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                            >
-                                Close
+                                className="absolute top-0 right-2 p-2 text-white hover:text-gray-500"
+                                >
+                                x
                             </button>
                         </div>
                     </div>

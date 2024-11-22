@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("user-id");
+    const categoryId = request.nextUrl.searchParams.get("categoryId");
 
     if (!userId) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });
@@ -16,18 +17,16 @@ export async function GET(request: NextRequest) {
       where: {
         category: {
           budget: {
-            userId,
+            userId, 
           },
         },
+        ...(categoryId ? { categoryId } : {}), 
       },
       include: {
-        category: {
-          include: {
-            budget: true,
-          },
-        },
+        category: true,
       },
     });
+
 
     const safeExpenses: SafeExpense[] = expenses.map((expense) => ({
       id: expense.id,
@@ -47,9 +46,45 @@ export async function POST(request: NextRequest) {
     const body: ExpenseData = await request.json();
     const { description, amount, categoryId } = body;
 
-    if (!description || !amount || !categoryId) {
+    console.log("Received body:", body);
+
+    if (!description || amount === undefined || !categoryId) {
       return NextResponse.json(
         { message: "Description, amount, and category ID are required" },
+        { status: 400 }
+      );
+    }
+
+    if (typeof amount !== 'number' || isNaN(amount)) {
+      return NextResponse.json({ message: "Invalid amount" }, { status: 400 });
+    }
+
+
+    if (typeof categoryId !== 'string') {
+      return NextResponse.json({ message: "Invalid category ID" }, { status: 400 });
+    }
+
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      include: { budget: true },  
+    });
+
+    console.log("Fetched category:", category);
+
+    if (!category || !category.budget) {
+      return NextResponse.json(
+        { message: "Category or Budget not found" },
+        { status: 400 }
+      );
+    }
+
+    const remainingBudget = category.budget.remaining - amount;
+    console.log("Remaining budget after expense:", remainingBudget);
+
+
+    if (remainingBudget < 0) {
+      return NextResponse.json(
+        { message: "Expense exceeds the available budget" },
         { status: 400 }
       );
     }
@@ -59,6 +94,13 @@ export async function POST(request: NextRequest) {
         description,
         amount,
         categoryId,
+      },
+    });
+
+    await prisma.budget.update({
+      where: { id: category.budgetId },
+      data: {
+        remaining: remainingBudget,  
       },
     });
 
