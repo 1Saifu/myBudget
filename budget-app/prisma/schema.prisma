@@ -18,7 +18,7 @@ model User {
 model Budget {
   id           String      @id @default(auto()) @map("_id") @db.ObjectId
   amount       Float       
-  remaining    Float       @default(0)
+  remaining    Float       
   startDate    DateTime
   endDate      DateTime
   userId       String      @db.ObjectId @unique 
