@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
                     {token && (
                         <>
                             <Link href="/dashboard" className="mr-4 hover:text-gray-300">Dashboard</Link>
-                            <Link href="/expense-summary" className="mr-4 hover:text-gray-300">View Chart</Link>
+                            <Link href="/chart" className="mr-4 hover:text-gray-300">View Chart</Link>
                         </>
                     )}
                 </div>                
