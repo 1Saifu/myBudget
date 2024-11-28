@@ -21,6 +21,7 @@ const categoryChart: React.FC = () => {
     const [chartData, setChartData] = useState<any>(null);
     const [error, setError] = useState<string>("");
     const [categories, setCategories] = useState<Record<string, string>>({});
+    const [expenses, setExpenses] = useState<Expense[]>([]);
 
     useEffect(() => {
       fetchCategoryNames();
@@ -28,10 +29,10 @@ const categoryChart: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (categories && Object.keys(categories).length > 0) {
-          fetchExpenseData();
+        if (categories && expenses.length > 0) {
+          aggregateData(expenses);
         }
-      }, [categories]); 
+      }, [categories, expenses]);
     
 
     const fetchCategoryNames = async () => {
@@ -86,13 +87,13 @@ const categoryChart: React.FC = () => {
             },
           });
 
-          const expenses = await response.json();
+          const expenseData = await response.json();
 
-      if (response.ok) {
-        aggregateData(expenses);
-      } else {
-        setError(expenses.message || "Error fetching expenses.");
-      }
+          if (response.ok) {
+            setExpenses(expenseData);
+          } else {
+            setError(expenseData.message || "Error fetching expenses.");
+          }
     } catch (error) {
       console.error("Error fetching expense data:", error);
       setError("An error occurred while fetching expense data.");
@@ -148,6 +149,17 @@ const categoryChart: React.FC = () => {
 
   if (error) {
     return <p className="text-red-500">{error}</p>;
+  }
+  
+
+  if (!categories || Object.keys(categories).length === 0 || expenses.length === 0) {
+    return (
+      <div className="flex items-center justify-center mt-7">
+        <p className="text-2xl font-light text-white">
+          You need to add categories and expenses to view the chart.
+        </p>
+      </div>
+    );
   }
 
   return (

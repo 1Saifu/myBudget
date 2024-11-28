@@ -23,18 +23,15 @@ const getRandomColor = (): string => {
 const categoryList: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryColors, setCategoryColors] = useState<{ [key: string]: string }>({}); 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      setLoading(true);
       setError(null);
 
       const userId = LocalStorageKit.get("@library/userId");
       if (!userId) {
         setError("User ID is required. Please log in.");
-        setLoading(false);
         return;
       }
 
@@ -65,21 +62,30 @@ const categoryList: React.FC = () => {
         }
       } catch (err) {
         setError("Failed to fetch categories.");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchCategories();
   }, []);
 
+  const handleCategoryUpdated = (updatedCategory: Category) => {
+    setCategories((prevCategories) =>
+      prevCategories.map((category) =>
+        category.id === updatedCategory.id ? updatedCategory : category
+      )
+    );
+  };
+
+
+  const handleCategoryDeleted = (categoryId: string) => {
+    setCategories((prevCategories) =>
+      prevCategories.filter((category) => category.id !== categoryId)
+    );
+  };
+
   const handleOpenModal = (categoryId: string) => {
     console.log("Open modal for category:", categoryId);
   };
-
-  if (loading) {
-    return <p>Loading categories...</p>;
-  }
 
   if (error) {
     return <p className="text-red-500">{error}</p>;
@@ -94,6 +100,8 @@ const categoryList: React.FC = () => {
           name={category.name}
           bgColor={categoryColors[category.id]}
           onOpenModal={handleOpenModal}
+          onCategoryUpdated={handleCategoryUpdated}
+          onCategoryDeleted={handleCategoryDeleted}
         />
       ))}
     </div>
