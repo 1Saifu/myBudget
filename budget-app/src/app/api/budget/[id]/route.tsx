@@ -94,9 +94,8 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ message: "Budget not found" }, { status: 404 });
       }
 
-      const categoryIds = budget.categories.map((category) => {
-        const safeCategory = category as SafeCategory;
-        return safeCategory.id;
+      const categoryIds = (budget.categories as SafeCategory[]).map((category) => {
+        return category.id;
       });
   
 
