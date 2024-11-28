@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { SafeBudget, BudgetData } from "@/types/budget";
+import { SafeCategory } from "@/types/category";
+import { SafeExpense } from "@/types/expense";
 
 const prisma = new PrismaClient();
 
@@ -24,11 +26,11 @@ export async function GET(request: NextRequest) {
   
       const safeBudgets: SafeBudget[] = await Promise.all(
         budgets.map(async (budget) => {
-          const totalExpenses = budget.categories.reduce((total: number, category) => {
-            return total + category.expenses.reduce((categoryTotal: number, expense) => {
+          const totalExpenses = budget.categories.reduce((total: number, category: SafeCategory) => {
+            return total + category.expenses.reduce((categoryTotal: number, expense: SafeExpense) => {
               return categoryTotal + expense.amount;
             }, 0);
-          }, 0);          
+          }, 0)       
   
           const remaining = budget.amount - totalExpenses;
   
