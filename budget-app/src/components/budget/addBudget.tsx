@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState,useEffect } from "react";
-import BudgetModal from "./BudgetModal"; 
+import BudgetModal from "./budgetModal"; 
 import LocalStorageKit from "@/utils/localStorageKit";
 
 
