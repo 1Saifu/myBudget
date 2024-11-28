@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CategoryCard from "./CategoryCard";
+import CategoryCard from "./categoryCard";
 import LocalStorageKit from "@/utils/localStorageKit";
 
 interface Category {

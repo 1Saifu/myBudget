@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../components/layout/Navbar';
 import CreateCategoryModal from '../../components/category/createCategoryModal';
 import AddBudget from '../../components/budget/addBudget';
-import CategoryList from "../../components/category/CategoryList"; 
+import CategoryList from "../../components/category/categoryList"; 
 import BudgetDisplay from "../../components/budget/BudgetDisplay";
 
 const Dashboard: React.FC = () => {
