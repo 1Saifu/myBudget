@@ -4,9 +4,10 @@ import { SafeCategory, CategoryData } from "@/types/category";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
   try {
-    const { id } = params;
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
 
     const category = await prisma.category.findUnique({
       where: {
@@ -41,9 +42,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 
-  export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  export async function PUT(request: NextRequest) {
     try {
-      const { id } = params;
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
+
       const body: CategoryData = await request.json(); 
       const { name } = body;
   
@@ -66,14 +69,26 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-  export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  export async function DELETE(request: NextRequest) {
     try {
-      const { id } = params;
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
+
+      const category = await prisma.category.findUnique({
+        where: { id },
+        include: { expenses: true },
+      });
+  
+      if (!category) {
+        return NextResponse.json({ message: "Category not found" }, { status: 404 });
+      }
+
+      await prisma.expense.deleteMany({
+        where: { categoryId: id },
+      });
   
       const deletedCategory = await prisma.category.delete({
-        where: {
-          id: id,
-        },
+        where: { id: id, },
       });
   
       return NextResponse.json(deletedCategory, { status: 200 });

@@ -4,9 +4,11 @@ import { SafeBudget, BudgetData } from "@/types/budget";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
     try {
-      const { id } = params;
+      
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
   
       const budget = await prisma.budget.findUnique({
         where: { id },
@@ -46,9 +48,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest) {
     try {
-      const { id } = params;
+      
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
+
       const body = await request.json();
       const { amount, startDate, endDate }: BudgetData = body;
   
@@ -71,10 +76,33 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 }
   
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
     try {
-      const { id } = params;
+      
+      const url = new URL(request.url);
+      const id = url.pathname.split('/').pop();
+
+      const budget = await prisma.budget.findUnique({
+        where: { id },
+        include: { categories: true }, 
+      });
   
+      if (!budget) {
+        return NextResponse.json({ message: "Budget not found" }, { status: 404 });
+      }
+
+      await prisma.expense.deleteMany({
+        where: {
+          categoryId: {
+            in: budget.categories.map((category) => category.id),
+          },
+        },
+      });
+
+      await prisma.category.deleteMany({
+        where: { budgetId: id },
+      });
+
       const deletedBudget = await prisma.budget.delete({
         where: { id },
       });

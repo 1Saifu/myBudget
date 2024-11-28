@@ -4,9 +4,10 @@ import { SafeExpense, ExpenseData } from "@/types/expense";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
   try {
-    const { id } = params;
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
 
     const expense = await prisma.expense.findUnique({
       where: { id },
@@ -32,9 +33,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest) {
   try {
-    const { id } = params;
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+
     const body: ExpenseData = await request.json();
     const { description, amount, categoryId } = body;
 
@@ -61,9 +64,10 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
   
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
   try {
-    const { id } = params;
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
 
     const deletedExpense = await prisma.expense.delete({
       where: { id },
