@@ -94,10 +94,16 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ message: "Budget not found" }, { status: 404 });
       }
 
+      const categoryIds = budget.categories.map((category) => {
+        const safeCategory = category as SafeCategory;
+        return safeCategory.id;
+      });
+  
+
       await prisma.expense.deleteMany({
         where: {
           categoryId: {
-            in: budget.categories.map((category) => category.id),
+            in: categoryIds,
           },
         },
       });
