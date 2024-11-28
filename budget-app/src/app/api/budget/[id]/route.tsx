@@ -25,11 +25,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: "Budget not found" }, { status: 404 });
       }
   
-      const totalExpenses = budget.categories.reduce((total, category) => {
-        return total + category.expenses.reduce((categoryTotal, expense) => {
+      const totalExpenses = budget.categories.reduce((total: number, category) => {
+        return total + category.expenses.reduce((categoryTotal: number, expense) => {
           return categoryTotal + expense.amount;
         }, 0);
       }, 0);
+      
   
       const remaining = budget.amount - totalExpenses;
   
