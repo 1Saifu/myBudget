@@ -1,4 +1,4 @@
-import LoginForm from '@/components/auth/LoginForm';
+import LoginForm from '../../components/auth/loginForm';
 import Navbar from '../../components/layout/Navbar';
 
 const LoginPage: React.FC = () => {

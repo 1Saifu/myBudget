@@ -1,4 +1,4 @@
-import RegisterForm from '@/components/auth/RegisterForm';
+import RegisterForm from '../../components/auth/registerForm';
 import Navbar from '../../components/layout/Navbar';
 
 const RegisterPage: React.FC = () => {
