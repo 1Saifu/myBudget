@@ -72,7 +72,7 @@ const addBudget: React.FC = () => {
       {!budgetCreated && (
         <button
           onClick={openModal}
-          className="bg-transparent border-2 mt-1 border-white text-white px-6 py-2 rounded-[30px] w-[300px] font-light w-[200px] hover:bg-purple-600 hover:text-gray-300 hover:border-gray-600 transition duration-300"
+          className="bg-transparent border-2 my-5 border-white text-white px-6 py-2 rounded-[30px] w-[300px] font-light w-[200px] hover:bg-purple-600 hover:text-gray-300 hover:border-gray-600 transition duration-300"
         >
           Add Budget
         </button>
