@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       });
   
       const safeBudgets: SafeBudget[] = await Promise.all(
-        budgets.map(async (budget) => {
+        budgets.map(async (budget: SafeBudget) => {  
           const totalExpenses = budget.categories.reduce((total: number, category: SafeCategory) => {
             return total + category.expenses.reduce((categoryTotal: number, expense: SafeExpense) => {
               return categoryTotal + expense.amount;
@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
             endDate: budget.endDate,
             userId: budget.userId,
             remaining, 
+            categories: budget.categories, 
           };
         })
       );
