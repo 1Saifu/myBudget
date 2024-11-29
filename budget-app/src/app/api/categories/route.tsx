@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { SafeCategory, CategoryData } from "@/types/category"; 
+import { SafeExpense } from "@/types/expense"; 
 
 const prisma = new PrismaClient();
 
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       const safeCategories: SafeCategory[] = categories.map(category => ({
         id: category.id,
         name: category.name,
-        expenses: category.expenses.map((expense) => ({
+        expenses: (category.expenses as SafeExpense[]).map((expense) => ({
           id: expense.id,
           description: expense.description,
           amount: expense.amount,
