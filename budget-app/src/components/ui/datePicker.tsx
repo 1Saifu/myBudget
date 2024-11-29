@@ -2,7 +2,7 @@
 
 import React from "react";
 import { DateRange } from "react-date-range";
-import { enUS } from "react-date-range/dist/locale";
+import { enUS } from "date-fns/locale"; 
 import "react-date-range/dist/styles.css"; 
 import "react-date-range/dist/theme/default.css"; 
 import './style/date.css'
@@ -27,7 +27,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ dateRange, onChange }) => {
                 direction="vertical"
                 showDateDisplay={false}
                 rangeColors={['#800080', '#800080']}                 
-                locale={enUS}
+                locale={enUS} 
             />
         </div>
     );

@@ -29,6 +29,11 @@ interface BudgetModalProps {
           alert("User ID is required. Please log in.");
           return;
         }
+
+        if (!(dateRange.startDate instanceof Date) || !(dateRange.endDate instanceof Date)) {
+          alert("Please select a valid date range.");
+          return;
+        }
     
         const budgetData = {
           amount: Number(amount),

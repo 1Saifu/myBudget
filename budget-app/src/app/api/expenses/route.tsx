@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Expense } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { SafeExpense, ExpenseData } from "@/types/expense";
 
 const prisma = new PrismaClient();
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });
     }
 
-    const expenses: Expense[] = await prisma.expense.findMany({
+    const expenses = await prisma.expense.findMany({
       where: {
         category: {
           budget: {
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     });
 
 
-    const safeExpenses: SafeExpense[] = expenses.map((expense: Expense) => ({
+    const safeExpenses: SafeExpense[] = expenses.map((expense) => ({
       id: expense.id,
       description: expense.description,
       amount: expense.amount,
