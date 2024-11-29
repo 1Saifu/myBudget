@@ -11,7 +11,6 @@ if (!secret) {
     throw new Error("JWT_SECRET environment variable is not set");
 }
 
-
 console.log("JWT_SECRET loaded:", secret);
 
 const encodedSecret = new TextEncoder().encode(secret);
