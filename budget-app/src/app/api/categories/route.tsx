@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       });
   
 
-      const safeCategories: SafeCategory[] = categories.map(category => ({
+      const safeCategories: SafeCategory[] = categories.map((category: { id: string, name: string, expenses: SafeExpense[], budget: { id: string } }) => ({
         id: category.id,
         name: category.name,
         expenses: (category.expenses as SafeExpense[]).map((expense) => ({
