@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
         endDate: budget.endDate,
         userId: budget.userId,
         remaining,
+        categories: budget.categories,
       };
   
       return NextResponse.json(safeBudget, { status: 200 });
