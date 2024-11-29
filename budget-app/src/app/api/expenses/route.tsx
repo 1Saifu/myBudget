@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Expense } from "@prisma/client";
 import { SafeExpense, ExpenseData } from "@/types/expense";
 
 const prisma = new PrismaClient();
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: "User ID is required" }, { status: 400 });
     }
 
-    const expenses = await prisma.expense.findMany({
+    const expenses: Expense[] = await prisma.expense.findMany({
       where: {
         category: {
           budget: {
@@ -28,11 +28,11 @@ export async function GET(request: NextRequest) {
     });
 
 
-    const safeExpenses: SafeExpense[] = expenses.map((expense) => ({
-      id: expense.id.toString(),
+    const safeExpenses: SafeExpense[] = expenses.map((expense: Expense) => ({
+      id: expense.id,
       description: expense.description,
       amount: expense.amount,
-      categoryId: expense.categoryId.toString(),
+      categoryId: expense.categoryId,
     }));
 
     return NextResponse.json(safeExpenses, { status: 200 });
@@ -45,8 +45,6 @@ export async function POST(request: NextRequest) {
   try {
     const body: ExpenseData = await request.json();
     const { description, amount, categoryId } = body;
-
-    console.log("Received body:", body);
 
     if (!description || amount === undefined || !categoryId) {
       return NextResponse.json(
@@ -69,8 +67,6 @@ export async function POST(request: NextRequest) {
       include: { budget: true },  
     });
 
-    console.log("Fetched category:", category);
-
     if (!category || !category.budget) {
       return NextResponse.json(
         { message: "Category or Budget not found" },
@@ -79,8 +75,6 @@ export async function POST(request: NextRequest) {
     }
 
     const remainingBudget = category.budget.remaining - amount;
-    console.log("Remaining budget after expense:", remainingBudget);
-
 
     if (remainingBudget < 0) {
       return NextResponse.json(
