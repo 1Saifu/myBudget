@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Expense } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { SafeExpense, ExpenseData } from "@/types/expense";
 
 const prisma = new PrismaClient();
@@ -28,11 +28,11 @@ export async function GET(request: NextRequest) {
     });
 
 
-    const safeExpenses: SafeExpense[] = expenses.map((expense: Expense) => ({
-      id: expense.id,
+    const safeExpenses: SafeExpense[] = expenses.map((expense) => ({
+      id: expense.id.toString(),
       description: expense.description,
       amount: expense.amount,
-      categoryId: expense.categoryId,
+      categoryId: expense.categoryId.toString(),
     }));
 
     return NextResponse.json(safeExpenses, { status: 200 });
