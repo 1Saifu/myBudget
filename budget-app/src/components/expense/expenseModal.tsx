@@ -207,7 +207,7 @@ return(
           ) : (
             <>
               <div className="flex flex-grow gap-2">
-                <span>{expense.description} - ${expense.amount}</span>
+                <span>{expense.description} - {expense.amount}kr</span>
               </div>
               <div className="flex gap-2">
                 <button

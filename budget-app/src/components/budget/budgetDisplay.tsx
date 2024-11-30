@@ -109,8 +109,12 @@ const budgetDisplay: React.FC = () => {
                           year: "numeric",
                         })}
                       </h3>
-                      <p className="text-xl font-light">Amount: ${budget.amount}</p>
-                      <p className="text-xl font-light">Remaining: ${budget.remaining}</p>
+                      <p className="text-2xl font-light">
+                      {budget.amount} <span className="font-light">kr</span>
+                      </p>
+                      <p className="text-2xl font-light">
+                      {budget.remaining} <span className="font-light">kr</span>
+                      </p>
 
                       <button
                 onClick={() => handleEdit(budget)}
