@@ -58,7 +58,6 @@ interface BudgetModalProps {
           console.log("Response status:", response.status);
     
           if (response.ok) {
-            alert("Budget created successfully!");
             LocalStorageKit.set("@library/budgetData", budgetData);
             setAmount("");
             window.location.reload();

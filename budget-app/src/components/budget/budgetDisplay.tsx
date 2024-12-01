@@ -110,10 +110,10 @@ const budgetDisplay: React.FC = () => {
                         })}
                       </h3>
                       <p className="text-2xl font-light">
-                      {budget.amount} <span className="font-light">kr</span>
+                      Amount: {budget.amount} <span className="font-light">kr</span>
                       </p>
                       <p className="text-2xl font-light">
-                      {budget.remaining} <span className="font-light">kr</span>
+                      Remaining: {budget.remaining} <span className="font-light">kr</span>
                       </p>
 
                       <button

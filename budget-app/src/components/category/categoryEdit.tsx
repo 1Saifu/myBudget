@@ -35,7 +35,6 @@ interface CategoryEditProps {
           if (response.ok) {
             const updatedCategory = await response.json();
             onCategoryUpdated(updatedCategory);
-            alert("Category updated successfully");
             window.location.reload();
             onClose();
           } else {

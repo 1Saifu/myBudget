@@ -34,7 +34,6 @@ const budgetEdit: React.FC<BudgetEditProps> = ({ isOpen, onClose, budget, onBudg
             });
       
             if (!response.ok) throw new Error("Failed to update budget");
-            alert("Budget updated successfully!");
             onBudgetUpdated();
             window.location.reload()
             onClose();

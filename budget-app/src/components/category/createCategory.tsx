@@ -33,7 +33,6 @@ const createCategory: React.FC = () => {
           });
     
           if (response.ok) {
-            alert("Category created successfully!");
             setName("");
             window.location.reload();
           } else {

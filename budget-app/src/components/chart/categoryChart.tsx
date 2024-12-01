@@ -59,14 +59,11 @@ const categoryChart: React.FC = () => {
                 return acc;
             }, {});
 
-            console.log("Mapped categories:", categoryMap);
-
             setCategories(categoryMap);
           } else {
             setError("Error fetching categories.");
           }
         } catch (error) {
-          console.error("Error fetching category names:", error);
           setError("An error occurred while fetching category names.");
         }
       };
@@ -95,7 +92,6 @@ const categoryChart: React.FC = () => {
             setError(expenseData.message || "Error fetching expenses.");
           }
     } catch (error) {
-      console.error("Error fetching expense data:", error);
       setError("An error occurred while fetching expense data.");
     }
   };
