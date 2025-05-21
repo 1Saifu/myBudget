@@ -65,12 +65,37 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ message: "Amount, start date, and end date are required" }, { status: 400 });
       }
   
+      const budget = await prisma.budget.findUnique({
+        where: { id },
+        include: {
+          categories: {
+            include: {
+              expenses: true,
+            },
+          },
+        },
+      });
+
+      if (!budget) {
+        return NextResponse.json({ message: "Budget not found" }, { status: 404 });
+      }
+  
+      const totalExpenses = budget.categories.reduce((total, category) => {
+        return total + category.expenses.reduce((catTotal, expense) => catTotal + expense.amount, 0);
+      }, 0);
+  
+      if (amount < totalExpenses) {
+        return NextResponse.json({ message: "New amount is less than total expenses" }, { status: 400 });
+      }
+  
+
       const updatedBudget = await prisma.budget.update({
         where: { id },
         data: {
           amount,
           startDate: new Date(startDate),
           endDate: new Date(endDate),
+          remaining: amount - totalExpenses,
         },
       });
   
@@ -95,9 +120,7 @@ export async function DELETE(request: NextRequest) {
         return NextResponse.json({ message: "Budget not found" }, { status: 404 });
       }
 
-      const categoryIds = (budget.categories as SafeCategory[]).map((category) => {
-        return category.id;
-      });
+      const categoryIds = budget.categories.map(category => category.id);
   
 
       await prisma.expense.deleteMany({

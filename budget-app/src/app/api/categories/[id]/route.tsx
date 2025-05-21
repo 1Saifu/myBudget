@@ -77,12 +77,22 @@ export async function GET(request: NextRequest) {
 
       const category = await prisma.category.findUnique({
         where: { id },
-        include: { expenses: true },
+        include: { expenses: true, budget: true },
       });
   
       if (!category) {
         return NextResponse.json({ message: "Category not found" }, { status: 404 });
       }
+
+      const totalExpensesAmount = category.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+      await prisma.budget.update({
+        where: { id: category.budget.id },
+        data: {
+          remaining: category.budget.remaining + totalExpensesAmount,
+        },
+      });
+  
 
       await prisma.expense.deleteMany({
         where: { categoryId: id },

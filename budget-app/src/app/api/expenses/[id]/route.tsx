@@ -48,12 +48,50 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    const oldExpense = await prisma.expense.findUnique({
+      where: { id },
+      include: {
+        category: {
+          include: { budget: true },
+        },
+      },
+    });
+
+    if (!oldExpense || !oldExpense.category?.budget) {
+      return NextResponse.json({ message: "Expense or budget not found" }, { status: 404 });
+    }
+
+    const budgetId = oldExpense.category.budget.id;
+    const oldAmount = oldExpense.amount;
+
+    const amountDiff = amount - oldAmount;
+
+    const budget = await prisma.budget.findUnique({ where: { id: budgetId } });
+
+    if (!budget) {
+      return NextResponse.json({ message: "Budget not found" }, { status: 404 });
+    }
+
+    if (amountDiff > budget.remaining) {
+      return NextResponse.json(
+        { message: "Updated expense exceeds available budget" },
+        { status: 400 }
+      );
+    }
+
     const updatedExpense = await prisma.expense.update({
       where: { id },
       data: {
         description,
         amount,
         categoryId,
+      },
+    });
+
+    await prisma.budget.update({
+      where: { id: budgetId },
+      data: {
+        remaining: budget.remaining - amountDiff,
       },
     });
 
@@ -67,13 +105,35 @@ export async function PUT(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const url = new URL(request.url);
-    const id = url.pathname.split('/').pop();
+    const id = url.pathname.split('/').filter(Boolean).pop(); 
 
-    const deletedExpense = await prisma.expense.delete({
+    const expense = await prisma.expense.findUnique({
+      where: { id },
+      include: {
+        category: {
+          include: { budget: true },
+        },
+      },
+    });
+
+    if (!expense || !expense.category?.budget) {
+      return NextResponse.json({ message: "Expense or budget not found" }, { status: 404 });
+    }
+
+    const budgetId = expense.category.budget.id;
+
+    await prisma.expense.delete({
       where: { id },
     });
 
-    return NextResponse.json(deletedExpense, { status: 200 });
+    await prisma.budget.update({
+      where: { id: budgetId },
+      data: {
+        remaining: expense.category.budget.remaining + expense.amount,
+      },
+    });
+
+    return NextResponse.json({ message: "Expense deleted" }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ message: "Error deleting expense", error: error.message }, { status: 500 });
   }
